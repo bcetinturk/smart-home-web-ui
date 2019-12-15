@@ -1,0 +1,20 @@
+head
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp")
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css")
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js")
+    link(href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap", rel="stylesheet")
+    link(rel="stylesheet", href="/styles.css")
+
+body
+    .login-form
+        form(action="/login" method="post")
+            h2.text-center Giriş Yap
+            .form-group
+                input.form-control(type="text" placeholder="Kullanıcı Adı" name="username" required="required")
+            .form-group
+                input.form-control(type="password" placeholder="Şifre" name="password" required="required")
+            .form-group
+                button.btn.btn-primary.btn-block(type="submit") Giriş Yap
+
