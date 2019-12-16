@@ -5,7 +5,10 @@ const UserSchema = new mongoose.Schema({
     username: String,
     password: String,
     apartment: Number,
-    houseware: Object,
+    houseware: [{
+        device: {type: mongoose.Schema.Types.ObjectId, ref: "Device"},
+        pinNo: Number
+    }],
 })
 
 UserSchema.pre("save", async function(next){
