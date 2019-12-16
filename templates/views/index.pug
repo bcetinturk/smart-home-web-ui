@@ -21,42 +21,11 @@ body
                 canvas(id="line-chart")
             .col-md-5
                 div(class="d-flex flex-wrap")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    .p-1
-                        button(class="switch off")
-                            img(src="/icons/air-conditioner-closed.png" )
-                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    each obj in devices
+                        .p-1
+                            button(class="switch off")
+                                img(src=`/icons/${obj.iconName}-closed.png`)
+                                img(src=`/icons/${obj.iconName}-opened.png` class="invisible")
 
     script.
         document.querySelectorAll(".switch").forEach(function(elem){
