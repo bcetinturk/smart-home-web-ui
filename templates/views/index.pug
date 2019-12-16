@@ -1,0 +1,68 @@
+head
+    include ../partials/links
+
+body
+    .container
+        .row
+            .col-sm-4
+                h3  Daire
+                h4  3
+            .col-sm-4
+                h3  Şebeke Kullanımı
+                h4  60
+            .col-sm-4
+                h3  Güneş Enerjisi Kullanımı
+                h4  48
+
+        .row
+            .col-md-6
+                div fatura: 59 &#8378;
+                span bar chart
+            .col-md-6
+                span pie chart
+        
+        .row
+            .col-md-3
+                button(class="switch off")
+                    img(src="/icons/air-conditioner-closed.png" )
+                    img(src="/icons/air-conditioner-opened.png" class="invisible")
+            .col-md-3
+                button(class="switch off")
+                    img(src="/icons/air-conditioner-closed.png" )
+                    img(src="/icons/air-conditioner-opened.png" class="invisible")
+            .col-md-3
+                button(class="switch off")
+                    img(src="/icons/air-conditioner-closed.png" )
+                    img(src="/icons/air-conditioner-opened.png" class="invisible")
+            .col-md-3
+                button(class="switch off")
+                    img(src="/icons/air-conditioner-closed.png" )
+                    img(src="/icons/air-conditioner-opened.png" class="invisible")
+            .col-md-3
+                button(class="switch off")
+                    img(src="/icons/air-conditioner-closed.png" )
+                    img(src="/icons/air-conditioner-opened.png" class="invisible")
+            .col-md-3
+                button(class="switch off")
+                    img(src="/icons/air-conditioner-closed.png" )
+                    img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    
+            
+
+    script.
+        document.querySelectorAll(".switch").forEach(function(elem){
+            elem.addEventListener("click", function(e){
+                if(this.className.includes("off")){
+                    this.classList.remove("off")
+                    this.classList.add("on")
+                    this.childNodes[0].classList.add("invisible")
+                    this.childNodes[1].classList.remove("invisible")
+                } else {
+                    this.classList.remove("on")
+                    this.classList.add("off")
+                    this.childNodes[1].classList.add("invisible")
+                    this.childNodes[0].classList.remove("invisible")
+                }
+            })
+        })
+

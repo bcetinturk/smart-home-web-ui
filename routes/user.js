@@ -13,9 +13,7 @@ router.post("/login", passport.authenticate("local", {failureRedirect: "/login"}
 })
 
 router.get("/user/:id", (req, res)=>{
-    if(req.isAuthenticated()){
-        return res.render("index")
-    }
+    res.render("index")
 })
 
 module.exports = router

@@ -19,3 +19,26 @@
     font-size: 15px;
     font-weight: bold;
 }
+
+.switch {
+    background: none;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+}
+
+.switch:focus {
+    outline: none;
+}
+
+.off {
+    border: 5px solid #CCCCCC;
+}
+
+.on {
+    border: 5px solid #3498DB;
+}
+
+.invisible {
+    display: none;
+}
