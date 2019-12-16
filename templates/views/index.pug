@@ -1,5 +1,6 @@
 head
     include ../partials/links
+    script(src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0")
 
 body
     .container
@@ -15,39 +16,47 @@ body
                 h4  48
 
         .row
-            .col-md-6
+            .col-md-7
                 div fatura: 59 &#8378;
-                span bar chart
-            .col-md-6
-                span pie chart
-        
-        .row
-            .col-md-3
-                button(class="switch off")
-                    img(src="/icons/air-conditioner-closed.png" )
-                    img(src="/icons/air-conditioner-opened.png" class="invisible")
-            .col-md-3
-                button(class="switch off")
-                    img(src="/icons/air-conditioner-closed.png" )
-                    img(src="/icons/air-conditioner-opened.png" class="invisible")
-            .col-md-3
-                button(class="switch off")
-                    img(src="/icons/air-conditioner-closed.png" )
-                    img(src="/icons/air-conditioner-opened.png" class="invisible")
-            .col-md-3
-                button(class="switch off")
-                    img(src="/icons/air-conditioner-closed.png" )
-                    img(src="/icons/air-conditioner-opened.png" class="invisible")
-            .col-md-3
-                button(class="switch off")
-                    img(src="/icons/air-conditioner-closed.png" )
-                    img(src="/icons/air-conditioner-opened.png" class="invisible")
-            .col-md-3
-                button(class="switch off")
-                    img(src="/icons/air-conditioner-closed.png" )
-                    img(src="/icons/air-conditioner-opened.png" class="invisible")
-                    
-            
+                canvas(id="line-chart")
+            .col-md-5
+                div(class="d-flex flex-wrap")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
+                    .p-1
+                        button(class="switch off")
+                            img(src="/icons/air-conditioner-closed.png" )
+                            img(src="/icons/air-conditioner-opened.png" class="invisible")
 
     script.
         document.querySelectorAll(".switch").forEach(function(elem){
@@ -65,4 +74,29 @@ body
                 }
             })
         })
+    
+    script.
+        new Chart(document.getElementById("line-chart"), {
+            type: 'line',
+            data: {
+                labels: ["01:00", "02:00", "03:00", "04:00"],
+                datasets: [{ 
+                    data: [86,114,106,106],
+                    label: "Şebeke",
+                    borderColor: "#2175fc",
+                    pointBackgroundColor: "#2175fc",
+                    backgroundColor: "#2175fc",
+                    fill: false
+                }, { 
+                    data: [282,350,411,502],
+                    label: "Güneş Enerjisi",
+                    borderColor: "#40a6f5",
+                    pointBackgroundColor: "#40a6f5",
+                    backgroundColor: "#40a6f5",
+                    fill: false
+                }
+                ]
+            }
+            });
+
 

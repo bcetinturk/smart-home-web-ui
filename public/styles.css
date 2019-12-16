@@ -42,3 +42,13 @@
 .invisible {
     display: none;
 }
+
+h3 {
+    color:  #333333;
+    font-size: 1em;
+}
+
+h4 {
+    color: #8b8b8b;
+    font-size: 1.75em
+}
