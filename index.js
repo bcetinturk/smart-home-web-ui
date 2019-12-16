@@ -7,6 +7,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const passport = require("passport")
 const path = require("path")
 const session = require("express-session")
+const Device = require("./models/device.model")
 const User = require("./models/user.model")
 const Usage = require("./models/usage.model")
 const userRouter = require("./routes/user")

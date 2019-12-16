@@ -5,27 +5,30 @@ head
 body
     .container
         .row
-            .col-sm-4
+            .col-sm-3
                 h3  Daire
                 h4  3
-            .col-sm-4
+            .col-sm-3
                 h3  Şebeke Kullanımı
                 h4  60
-            .col-sm-4
+            .col-sm-3
                 h3  Güneş Enerjisi Kullanımı
                 h4  48
+            .col-sm-3
+                h3  Fatura
+                h4  59 &#8378;
+                
 
         .row
             .col-md-7
-                div fatura: 59 &#8378;
                 canvas(id="line-chart")
             .col-md-5
                 div(class="d-flex flex-wrap")
                     each obj in devices
                         .p-1
                             button(class="switch off")
-                                img(src=`/icons/${obj.iconName}-closed.png`)
-                                img(src=`/icons/${obj.iconName}-opened.png` class="invisible")
+                                img(src=`/icons/${obj.device.iconName}-closed.png`)
+                                img(src=`/icons/${obj.device.iconName}-opened.png` class="invisible")
 
     script.
         document.querySelectorAll(".switch").forEach(function(elem){

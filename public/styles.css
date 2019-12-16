@@ -43,6 +43,10 @@
     display: none;
 }
 
+.bill {
+    font-size: 1.5em;
+}
+
 h3 {
     color:  #333333;
     font-size: 1em;
