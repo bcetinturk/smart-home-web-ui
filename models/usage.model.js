@@ -3,7 +3,7 @@ const moment = require("moment")
 
 const UsageSchema = new mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
-    created: {type: Date, default: Date.now},
+    created: {type: String, default: moment().format("DD/MM/YYYY")},
     grid: Object,
     renewable: Object
 })
