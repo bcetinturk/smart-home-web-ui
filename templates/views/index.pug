@@ -7,13 +7,13 @@ body
         .row
             .col-sm-3
                 h3  Daire
-                h4  3
+                h4  #{apartment}
             .col-sm-3
                 h3  Şebeke Kullanımı
-                h4  60
+                h4  !{grid.reduce((a,b)=>a+b)} kWh
             .col-sm-3
                 h3  Güneş Enerjisi Kullanımı
-                h4  48
+                h4  !{renewable.reduce((a,b)=>a+b)} kWh
             .col-sm-3
                 h3  Fatura
                 h4  59 &#8378;
@@ -51,16 +51,16 @@ body
         new Chart(document.getElementById("line-chart"), {
             type: 'line',
             data: {
-                labels: ["01:00", "02:00", "03:00", "04:00"],
+                labels: !{JSON.stringify(labels)},
                 datasets: [{ 
-                    data: [86,114,106,106],
+                    data: !{JSON.stringify(grid)},
                     label: "Şebeke",
                     borderColor: "#2175fc",
                     pointBackgroundColor: "#2175fc",
                     backgroundColor: "#2175fc",
                     fill: false
                 }, { 
-                    data: [282,350,411,502],
+                    data: !{JSON.stringify(renewable)},
                     label: "Güneş Enerjisi",
                     borderColor: "#40a6f5",
                     pointBackgroundColor: "#40a6f5",
@@ -68,6 +68,15 @@ body
                     fill: false
                 }
                 ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
             }
             });
 
