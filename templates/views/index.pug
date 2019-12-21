@@ -10,10 +10,10 @@ body
                 h4  #{apartment}
             .col-sm-3
                 h3  Şebeke Kullanımı
-                h4  !{grid.reduce((a,b)=>a+b).toFixed(2)} kWh
+                h4  !{gridTotal} kWh
             .col-sm-3
                 h3  Güneş Enerjisi Kullanımı
-                h4  !{renewable.reduce((a,b)=>a+b).toFixed(2)} kWh
+                h4  !{renewableTotal} kWh
             .col-sm-3
                 h3  Fatura
                 h4  #{bill.toFixed(2)} &#8378;

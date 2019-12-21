@@ -27,31 +27,58 @@ router.get("/user/:id", async (req, res)=>{
                             }
                         })
 
-    const labels = Object.keys(usage.grid)
-    const grid = Object.values(usage.grid)
-    const renewable = Object.values(usage.renewable)
-    
-    const bill = grid.reduce((t, g, i)=>{
-        let cost
-        if( moment(labels[i], "HH:mm").isBetween(moment("00:00", "HH:mm"), moment("08:00", "HH:mm")) ){
-            cost = 0.3715
-        } else if( moment(labels[i], "HH:mm").isBetween(moment("08:00", "HH:mm"), moment("16:00", "HH:mm")) ){
-            cost = 0.6361
-        } else {
-            cost = 0.1599
-        }
+    const labels = new Array(24).fill(undefined).map((v, i)=>
+        moment().startOf("day").add(1+i, "hour").format("HH:mm")
+    )
+    if(usage){
+        const grid = Object.values(usage.grid)
+        const renewable = Object.values(usage.renewable)
 
-        return t + g*cost
-    }, 0)
-    console.log(usage.user.houseware)
+        const bill = grid.reduce((t, g, i)=>{
+            let cost
+            if( moment(labels[i], "HH:mm").isBetween(moment("00:00", "HH:mm"), moment("08:00", "HH:mm")) ){
+                cost = 0.3715
+            } else if( moment(labels[i], "HH:mm").isBetween(moment("08:00", "HH:mm"), moment("16:00", "HH:mm")) ){
+                cost = 0.6361
+            } else {
+                cost = 0.1599
+            }
+    
+            return t + g*cost
+        }, 0)
+
+        const gridTotal = grid.reduce((a,b)=>a+b).toFixed(2)
+        const renewableTotal = renewable.reduce((a,b)=>a+b).toFixed(2)
+
+        return res.render("index", {
+            devices: usage.user.houseware,
+            apartment: usage.user.apartment,
+            labels,
+            grid,
+            renewable,
+            gridTotal,
+            renewableTotal,
+            bill
+        })
+    }
+    
+    const user = await User.findById(req.params.id)
+                            .populate("houseware.device")
     res.render("index", {
-        devices: usage.user.houseware,
-        apartment: usage.user.apartment,
+        devices: user.houseware,
+        apartment: user.apartment,
         labels,
-        grid,
-        renewable,
-        bill
+        grid: [],
+        renewable: [],
+        gridTotal: 0,
+        renewableTotal: 0,
+        bill: 0
     })
+    
+    
+    
+    //console.log(usage.user.houseware)
+    
 })
 
 module.exports = router
