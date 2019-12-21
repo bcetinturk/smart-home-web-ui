@@ -11,6 +11,7 @@ const Device = require("./models/device.model")
 const User = require("./models/user.model")
 const Usage = require("./models/usage.model")
 const userRouter = require("./routes/user")
+const usageRouter = require("./routes/usage")
 
 const mongoURI = "mongodb://localhost:27017/test"
 mongoose.connect(mongoURI, {
@@ -48,6 +49,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(userRouter)
+app.use(usageRouter)
 
 app.set("views", path.join(__dirname, "/templates/views"))
 app.set("view engine", "pug")

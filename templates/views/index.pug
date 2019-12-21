@@ -26,13 +26,24 @@ body
                 div(class="d-flex flex-wrap")
                     each obj in devices
                         .p-1
-                            button(class="switch off")
+                            button(class="switch off", data-pinno=`${obj.pinNo}`)
                                 img(src=`/icons/${obj.device.iconName}-closed.png`)
                                 img(src=`/icons/${obj.device.iconName}-opened.png` class="invisible")
 
     script.
         document.querySelectorAll(".switch").forEach(function(elem){
-            elem.addEventListener("click", function(e){
+            elem.addEventListener("click", async function(e){
+                (async ()=>{
+                    const rawResponse = await fetch("http://192.168.43.12", {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({pin: this.dataset.pinno})
+                    })
+                })()
+                
                 if(this.className.includes("off")){
                     this.classList.remove("off")
                     this.classList.add("on")

@@ -5,6 +5,10 @@ const Usage = require("../models/usage.model")
 const moment = require("moment")
 
 const router = express.Router()
+router.get("/", (req, res)=>{
+    res.redirect("/login")
+})
+
 router.get("/login", (req, res)=>{
     res.render("login")
 })
@@ -39,7 +43,7 @@ router.get("/user/:id", async (req, res)=>{
 
         return t + g*cost
     }, 0)
-
+    console.log(usage.user.houseware)
     res.render("index", {
         devices: usage.user.houseware,
         apartment: usage.user.apartment,
