@@ -4,6 +4,19 @@ head
 
 body
     .container
+        div(class="modal fade", id="myModal")
+            div(class="modal-dialog modal-dialog-centered")
+                div(class="modal-content")
+                    div(class="modal-header")
+                        h4(class="modal-title") Şimdi Çalıştırılsın mı?
+                        button(type="button", class="close", data-dismiss="modal") &times;
+                    div(class="modal-body")
+                        span(id="devname")
+                        span  gece de çalıştırılabilir. Gece çalıştırırsanız daha az ücret ödersiniz.
+                    div(class="modal-footer")
+                        button(class="btn btn-primary confirm") Gece Çalıştır
+                        button(class="btn btn-outline-primary decline") Şimdi Çalıştır
+                        
         .row
             .col-sm-3
                 h3  Daire
@@ -21,30 +34,53 @@ body
 
         .row
             .col-md-7
+                select(class="form-control", name="p", id="periodicity", onchange="handleDropdownChange()")
+                    option(value="daily") Günlük
+                    option(value="monthly", selected=monthlySelected) Aylık
                 canvas(id="line-chart")
             .col-md-5
                 div(class="d-flex flex-wrap")
                     each obj in devices
                         .p-1
-                            button(class="switch off", data-pinno=`${obj.pinNo}`)
+                            button(class="switch off" data-devname=obj.device.display data-atnight=`${obj.device.canRunAtNight}` data-pinno=`${obj.pinNo}`)
                                 img(src=`/icons/${obj.device.iconName}-closed.png`)
                                 img(src=`/icons/${obj.device.iconName}-opened.png` class="invisible")
 
     script.
+        const modalConfirm = function(callback){
+            $(".confirm").on("click", function(){
+                callback(false)
+                $("#myModal").modal('hide')
+            })
+            $(".decline").on("click", function(){
+                callback(true)
+                $("#myModal").modal('hide')
+            })
+        }
+        
+        async function handleDropdownChange(){
+            const val = document.getElementById("periodicity").value
+            const {pathname} = window.location
+            window.location.href = `${pathname}?p=${val}`
+        }
+
+    script.
         document.querySelectorAll(".switch").forEach(function(elem){
             elem.addEventListener("click", async function(e){
-                (async ()=>{
-                    const rawResponse = await fetch("http://192.168.43.12", {
-                        method: "POST",
-                        mode: "no-cors",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({pin: this.dataset.pinno})
+                if(this.dataset.atnight==="true" && this.className.includes("off")){
+                    document.getElementById("devname").innerText = this.dataset.devname
+                    $("#myModal").modal("show")
+
+                    modalConfirm((res)=>{
+                        if(res){
+                            this.classList.remove("off")
+                            this.classList.add("on")
+                            this.childNodes[0].classList.add("invisible")
+                            this.childNodes[1].classList.remove("invisible")
+                        }
                     })
-                })()
-                
-                if(this.className.includes("off")){
+
+                } else if(this.className.includes("off")){
                     this.classList.remove("off")
                     this.classList.add("on")
                     this.childNodes[0].classList.add("invisible")
@@ -55,6 +91,17 @@ body
                     this.childNodes[1].classList.add("invisible")
                     this.childNodes[0].classList.remove("invisible")
                 }
+
+                (async ()=>{
+                    const rawResponse = await fetch("http://192.168.43.12", {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({pin: this.dataset.pinno})
+                    })
+                })()
             })
         })
     

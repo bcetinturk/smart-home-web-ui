@@ -19,26 +19,95 @@ router.post("/login", passport.authenticate("local", {failureRedirect: "/login"}
 })
 
 router.get("/user/:id", async (req, res)=>{
-    const usage = await Usage.findOne({user: req.params.id, created: moment().format("DD/MM/YYYY")})
-                        .populate({
-                            path: "user",
-                            populate: {
-                                path: "houseware.device"
-                            }
-                        })
-
-    const labels = new Array(24).fill(undefined).map((v, i)=>
+    const monthlySelected = req.query.p==="monthly"
+    const hourLabels = new Array(24).fill(undefined).map((v, i)=>
         moment().startOf("day").add(1+i, "hour").format("HH:mm")
     )
+    const dayLabels = new Array(31).fill(undefined).map((v, i)=>
+        moment().startOf("month").add(i, "day").format("DD/MM")
+    )
+    const pattern = new RegExp(`\/${moment().month()+1}\/`)
+
+    const user = await User.findById(req.params.id)
+                            .populate("houseware.device")
+
+    let usage
+    if(monthlySelected){
+        usage = await Usage.find({
+            user: req.params.id,
+            created: {$regex: pattern, $options: "i"}
+        }).lean()
+
+        const monthBill=usage.reduce((tot, obj)=>{
+            const grid = Object.values(obj.grid)
+
+            const bill = grid.reduce((t, g, i)=>{
+                let cost
+                if( moment(hourLabels[i], "HH:mm").isBetween(moment("00:00", "HH:mm"), moment("08:00", "HH:mm")) ){
+                    cost = 0.3715
+                } else if( moment(hourLabels[i], "HH:mm").isBetween(moment("08:00", "HH:mm"), moment("16:00", "HH:mm")) ){
+                    cost = 0.6361
+                } else {
+                    cost = 0.1599
+                }
+        
+                return t + g*cost
+            }, 0)
+
+            return tot+bill
+        }, 0)
+
+        let i=0
+        const grid = dayLabels.map((v)=>{
+            if(usage[i] && moment(usage[i].created, "DD/MM/YYYY").isSame(moment(v, "DD/MM"), "day")){
+                const a = Object.values(usage[i].grid).reduce((t, v)=>t+v, 0)
+                i= i+1
+                return a
+            }else {
+                return 0
+            }
+        })
+
+        const gridTotal = grid.reduce((t, v)=> t+v, 0).toFixed(2)
+        
+        i=0
+        const renewable = dayLabels.map((v)=>{
+            if(usage[i] && moment(usage[i].created, "DD/MM/YYYY").isSame(moment(v, "DD/MM"), "day")){
+                const a = Object.values(usage[i].renewable).reduce((t, v)=>t+v, 0)
+                i= i+1
+                return a
+            }else {
+                return 0
+            }
+        })
+
+        const renewableTotal = renewable.reduce((t, v)=> t+v, 0).toFixed(2)
+        return res.render("index", {
+                    devices: user.houseware,
+                    apartment: user.apartment,
+                    labels: dayLabels,
+                    grid,
+                    renewable,
+                    gridTotal,
+                    renewableTotal,
+                    monthlySelected,
+                    bill: monthBill
+                })
+    }
+
+    usage = await Usage.findOne({
+        user: req.params.id,
+        created: moment().format("DD/MM/YYYY")
+    })
     if(usage){
         const grid = Object.values(usage.grid)
         const renewable = Object.values(usage.renewable)
 
         const bill = grid.reduce((t, g, i)=>{
             let cost
-            if( moment(labels[i], "HH:mm").isBetween(moment("00:00", "HH:mm"), moment("08:00", "HH:mm")) ){
+            if( moment(hourLabels[i], "HH:mm").isBetween(moment("00:00", "HH:mm"), moment("08:00", "HH:mm")) ){
                 cost = 0.3715
-            } else if( moment(labels[i], "HH:mm").isBetween(moment("08:00", "HH:mm"), moment("16:00", "HH:mm")) ){
+            } else if( moment(hourLabels[i], "HH:mm").isBetween(moment("08:00", "HH:mm"), moment("16:00", "HH:mm")) ){
                 cost = 0.6361
             } else {
                 cost = 0.1599
@@ -51,33 +120,29 @@ router.get("/user/:id", async (req, res)=>{
         const renewableTotal = renewable.reduce((a,b)=>a+b).toFixed(2)
 
         return res.render("index", {
-            devices: usage.user.houseware,
-            apartment: usage.user.apartment,
-            labels,
+            devices: user.houseware,
+            apartment: user.apartment,
+            labels: hourLabels,
             grid,
             renewable,
             gridTotal,
             renewableTotal,
+            monthlySelected,
             bill
         })
     }
-    
-    const user = await User.findById(req.params.id)
-                            .populate("houseware.device")
+                            
     res.render("index", {
         devices: user.houseware,
         apartment: user.apartment,
-        labels,
+        labels: hourLabels,
         grid: [],
         renewable: [],
         gridTotal: 0,
         renewableTotal: 0,
+        monthlySelected,
         bill: 0
     })
-    
-    
-    
-    //console.log(usage.user.houseware)
     
 })
 
