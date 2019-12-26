@@ -23,13 +23,19 @@ body
                 h4  #{apartment}
             .col-sm-3
                 h3  Şebeke Kullanımı
-                h4  !{gridTotal} kWh
+                h4
+                    span#grid1 !{gridTotal} 
+                    span  kWh
             .col-sm-3
                 h3  Güneş Enerjisi Kullanımı
-                h4  !{renewableTotal} kWh
+                h4  
+                    span#solar1 !{renewableTotal} 
+                    span  kWh
             .col-sm-3
                 h3  Fatura
-                h4  #{bill.toFixed(2)} &#8378;
+                h4
+                    span#bill1 #{bill.toFixed(2)} 
+                    span &#8378;
                 
 
         .row
@@ -59,9 +65,31 @@ body
         }
         
         async function handleDropdownChange(){
+            console.log("here")
             const val = document.getElementById("periodicity").value
-            const {pathname} = window.location
-            window.location.href = `${pathname}?p=${val}`
+            const pathname = window.location.pathname
+
+            const response = await fetch(`http://localhost:3000/get-data${pathname}`,{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({val})
+            })
+
+            if(response.ok){
+                const result = await response.json()
+                console.log(chart)
+                console.log(result)
+                chart.data.labels = result.labels
+                chart.data.datasets[0].data = result.grid
+                chart.data.datasets[1].data = result.renewable
+                document.getElementById("bill1").innerText = `${result.bill.toFixed(2)}`
+                document.getElementById("grid1").innerText = `${result.gridTotal}`
+                document.getElementById("solar1").innerText = `${result.renewableTotal}`
+                chart.update()
+                
+            }
         }
 
     script.
@@ -77,36 +105,40 @@ body
                             this.classList.add("on")
                             this.childNodes[0].classList.add("invisible")
                             this.childNodes[1].classList.remove("invisible")
+                        } else {
+                            console.log("ok boomer")
                         }
                     })
 
-                } else if(this.className.includes("off")){
-                    this.classList.remove("off")
-                    this.classList.add("on")
-                    this.childNodes[0].classList.add("invisible")
-                    this.childNodes[1].classList.remove("invisible")
                 } else {
-                    this.classList.remove("on")
-                    this.classList.add("off")
-                    this.childNodes[1].classList.add("invisible")
-                    this.childNodes[0].classList.remove("invisible")
-                }
+                    if(this.className.includes("off")){
+                        this.classList.remove("off")
+                        this.classList.add("on")
+                        this.childNodes[0].classList.add("invisible")
+                        this.childNodes[1].classList.remove("invisible")
+                    } else {
+                        this.classList.remove("on")
+                        this.classList.add("off")
+                        this.childNodes[1].classList.add("invisible")
+                        this.childNodes[0].classList.remove("invisible")
+                    }
 
-                (async ()=>{
-                    const rawResponse = await fetch("http://192.168.43.12", {
-                        method: "POST",
-                        mode: "no-cors",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({pin: this.dataset.pinno})
-                    })
-                })()
+                    (async ()=>{
+                        const rawResponse = await fetch("http://192.168.43.12", {
+                            method: "POST",
+                            mode: "no-cors",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({pin: this.dataset.pinno})
+                        })
+                    })()
+                }
             })
         })
     
     script.
-        new Chart(document.getElementById("line-chart"), {
+        const chart = new Chart(document.getElementById("line-chart"), {
             type: 'line',
             data: {
                 labels: !{JSON.stringify(labels)},
