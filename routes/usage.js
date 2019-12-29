@@ -5,9 +5,58 @@ const Usage = require("../models/usage.model")
 
 const router = express.Router()
 
-router.post("/new-data", (req, res)=>{
+let lastTime
+
+router.post("/new-data", async (req, res)=>{
     console.log(req.body)
-    res.send("k")
+    let key = `grid.$.${req.body.time}`
+    let usage = await Usage.findOne({
+        user: req.body.usage[0].ap,
+        created: moment().format("DD/MM/YYYY")
+    }).lean()
+    let id = usage._id
+    delete usage._id
+
+    lastTime = req.body.time
+
+    usage.grid[req.body.time] = Math.abs(req.body.usage[0].g)
+    usage.renewable[req.body.time] = req.body.usage[0].s
+    console.log("1", usage)
+    await Usage.update({_id: id}, usage)
+
+    //-------------------------------------------
+
+    key = `grid.$.${req.body.time}`
+    usage = await Usage.findOne({
+        user: req.body.usage[1].ap,
+        created: moment().format("DD/MM/YYYY")
+    }).lean()
+    id = usage._id
+    delete usage._id
+
+    lastTime = req.body.time
+
+    usage.grid[req.body.time] = req.body.usage[1].g
+    usage.renewable[req.body.time] = req.body.usage[1].s
+    console.log("2", usage)
+    await Usage.update({_id: id}, usage)
+
+    //----------------------------------------------
+
+    key = `grid.$.${req.body.time}`
+    usage = await Usage.findOne({
+        user: req.body.usage[2].ap,
+        created: moment().format("DD/MM/YYYY")
+    }).lean()
+    id = usage._id
+    delete usage._id
+
+    lastTime = req.body.time
+
+    usage.grid[req.body.time] = req.body.usage[2].g
+    usage.renewable[req.body.time] = req.body.usage[2].s
+    console.log("3", usage)
+    await Usage.update({_id: id}, usage)
 })
 
 router.post("/get-data/user/:id", async (req, res)=>{
@@ -77,7 +126,8 @@ router.post("/get-data/user/:id", async (req, res)=>{
             renewable,
             gridTotal,
             renewableTotal,
-            bill: monthBill
+            bill: monthBill,
+            lastTime
         })
     }
 
@@ -103,6 +153,7 @@ router.post("/get-data/user/:id", async (req, res)=>{
         }, 0)
 
         const gridTotal = grid.reduce((a,b)=>a+b).toFixed(2)
+        
         const renewableTotal = renewable.reduce((a,b)=>a+b).toFixed(2)
 
         return res.send({
@@ -111,7 +162,8 @@ router.post("/get-data/user/:id", async (req, res)=>{
             renewable,
             gridTotal,
             renewableTotal,
-            bill: bill
+            bill: bill,
+            lastTime
         })
     }
 
@@ -121,7 +173,8 @@ router.post("/get-data/user/:id", async (req, res)=>{
         renewable: [],
         gridTotal: 0,
         renewableTotal: 0,
-        bill: 0
+        bill: 0,
+        lastTime
     })
 })
 

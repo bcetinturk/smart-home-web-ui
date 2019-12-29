@@ -82,6 +82,7 @@ router.get("/user/:id", async (req, res)=>{
         })
 
         const renewableTotal = renewable.reduce((t, v)=> t+v, 0).toFixed(2)
+        
         return res.render("index", {
                     devices: user.houseware,
                     apartment: user.apartment,
@@ -118,7 +119,6 @@ router.get("/user/:id", async (req, res)=>{
 
         const gridTotal = grid.reduce((a,b)=>a+b).toFixed(2)
         const renewableTotal = renewable.reduce((a,b)=>a+b).toFixed(2)
-
         return res.render("index", {
             devices: user.houseware,
             apartment: user.apartment,

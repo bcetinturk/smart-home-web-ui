@@ -3,20 +3,7 @@ head
     script(src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0")
 
 body
-    .container
-        div(class="modal fade", id="myModal")
-            div(class="modal-dialog modal-dialog-centered")
-                div(class="modal-content")
-                    div(class="modal-header")
-                        h4(class="modal-title") Şimdi Çalıştırılsın mı?
-                        button(type="button", class="close", data-dismiss="modal") &times;
-                    div(class="modal-body")
-                        span(id="devname")
-                        span  gece de çalıştırılabilir. Gece çalıştırırsanız daha az ücret ödersiniz.
-                    div(class="modal-footer")
-                        button(class="btn btn-primary confirm") Gece Çalıştır
-                        button(class="btn btn-outline-primary decline") Şimdi Çalıştır
-                        
+    .container                   
         .row
             .col-sm-3
                 h3  Daire
@@ -35,9 +22,8 @@ body
                 h3  Fatura
                 h4
                     span#bill1 #{bill.toFixed(2)} 
-                    span &#8378;
+                    span  &#8378;
                 
-
         .row
             .col-md-7
                 select(class="form-control", name="p", id="periodicity", onchange="handleDropdownChange()")
@@ -48,24 +34,18 @@ body
                 div(class="d-flex flex-wrap")
                     each obj in devices
                         .p-1
-                            button(class="switch off" data-devname=obj.device.display data-atnight=`${obj.device.canRunAtNight}` data-pinno=`${obj.pinNo}`)
+                            button(class="switch off" data-devname=obj.device.display data-atnight=`${obj.device.canRunAtNight}` data-pinno=`${obj.pinNo}` data-pinno2=`${obj.pinNoo}`)
                                 img(src=`/icons/${obj.device.iconName}-closed.png`)
                                 img(src=`/icons/${obj.device.iconName}-opened.png` class="invisible")
-
-    script.
-        const modalConfirm = function(callback){
-            $(".confirm").on("click", function(){
-                callback(false)
-                $("#myModal").modal('hide')
-            })
-            $(".decline").on("click", function(){
-                callback(true)
-                $("#myModal").modal('hide')
-            })
-        }
         
+        .row
+            .col-md-7
+                div
+                    h3(class="table_header") Gece çalıştırılacak cihazlar
+                
+    
+    script.
         async function handleDropdownChange(){
-            console.log("here")
             const val = document.getElementById("periodicity").value
             const pathname = window.location.pathname
 
@@ -79,8 +59,6 @@ body
 
             if(response.ok){
                 const result = await response.json()
-                console.log(chart)
-                console.log(result)
                 chart.data.labels = result.labels
                 chart.data.datasets[0].data = result.grid
                 chart.data.datasets[1].data = result.renewable
@@ -88,29 +66,22 @@ body
                 document.getElementById("grid1").innerText = `${result.gridTotal}`
                 document.getElementById("solar1").innerText = `${result.renewableTotal}`
                 chart.update()
-                
             }
         }
 
     script.
+        const val = document.getElementById("periodicity").value
+        const pathname = window.location.pathname
+        setInterval(handleDropdownChange, 15000)
+
+    script.
+        const night = ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00"] 
+        const runAtNight = []
         document.querySelectorAll(".switch").forEach(function(elem){
-            elem.addEventListener("click", async function(e){
-                if(this.dataset.atnight==="true" && this.className.includes("off")){
-                    document.getElementById("devname").innerText = this.dataset.devname
-                    $("#myModal").modal("show")
-
-                    modalConfirm((res)=>{
-                        if(res){
-                            this.classList.remove("off")
-                            this.classList.add("on")
-                            this.childNodes[0].classList.add("invisible")
-                            this.childNodes[1].classList.remove("invisible")
-                        } else {
-                            console.log("ok boomer")
-                        }
-                    })
-
-                } else {
+            elem.addEventListener("click", function(e){
+                e.stopPropagation()
+                e.preventDefault()
+                
                     if(this.className.includes("off")){
                         this.classList.remove("off")
                         this.classList.add("on")
@@ -133,7 +104,7 @@ body
                             body: JSON.stringify({pin: this.dataset.pinno})
                         })
                     })()
-                }
+                
             })
         })
     

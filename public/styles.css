@@ -56,3 +56,7 @@ h4 {
     color: #8b8b8b;
     font-size: 1.75em
 }
+
+.table_header {
+    font-weight: 800;
+}
